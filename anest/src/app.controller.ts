@@ -1,12 +1,19 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Post } from '@nestjs/common';
 import { AppService } from './app.service';
 
-@Controller()
+@Controller('abc')
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
-  @Get()
-  getHello(): string {
-    return this.appService.getHello();
+  //req, res에 대하여 알고있음 
+
+  @Get('User') //Get /abc/User
+  getUser(): string {
+    return this.appService.getUser();
+  }
+
+  @Post('user') //POST /abc/User
+  postUser(): string {
+    return this.appService.postUser();
   }
 }
