@@ -2,7 +2,7 @@ import { Body, Controller, Get, Post, Query, Req, Res } from '@nestjs/common';
 import { JoinRequestDto } from './dto/join.request.dto';
 import { UsersService } from './users.service';
 
-@Controller('users')
+@Controller('api/users')
 export class UsersController {
     constructor(private usersService: UsersService){
 
@@ -14,8 +14,8 @@ export class UsersController {
     }
 
     @Post()
-    postUsers(@Body() data: JoinRequestDto ) {//@Body => express 의 body Pasrer 와 같은것 Dto = Data Transport Object
-        this.usersService.postUsers(data.email, data.nickname, data.password);
+    postUsers(@Body() body: JoinRequestDto ) {//@Body => express 의 body Pasrer 와 같은것 Dto = Data Transport Object
+        this.usersService.postUsers(body.email, body.nickname, body.password);
     }
     
     @Post('login')
