@@ -1,7 +1,12 @@
-import { Controller, Get, Post, Req, Res } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, Req, Res } from '@nestjs/common';
+import { JoinRequestDto } from './dto/join.request.dto';
+import { UsersService } from './users.service';
 
 @Controller('users')
 export class UsersController {
+    constructor(private usersService: UsersService){
+
+    }
 
     @Get()
     getUsers(@Req() req){ //로그인되어 있는 사용자의 정보를 가저옴
@@ -9,12 +14,12 @@ export class UsersController {
     }
 
     @Post()
-    postUsers(){
-
+    postUsers(@Body() data: JoinRequestDto ) {//@Body => express 의 body Pasrer 와 같은것 Dto = Data Transport Object
+        this.usersService.postUsers(data.email, data.nickname, data.password);
     }
     
     @Post('login')
-        logIn(){
+        logIn(@Req() req){
             return req.user; //향후 Passport 를 붙일 예정
         }
 
