@@ -1,7 +1,24 @@
-export class JoinRequestDto{
-    public email: string;
+import { ApiProperty } from '@nestjs/swagger/dist/decorators';
 
-    public nickname: string;
+export class JoinRequestDto {
+  @ApiProperty({
+    example: 'stronghu95@gmail.com',
+    description: 'E-mail',
+    required: true,
+  })
+  public email: string;
 
-    public password: string;
+  @ApiProperty({
+    example: 'Cliche',
+    description: 'Nickname',
+    required: true,
+  })
+  public nickname: string;
+
+  @ApiProperty({
+    example: 'NestJSBook',
+    description: 'Password',
+    required: true,
+  })
+  public password: string;
 }
