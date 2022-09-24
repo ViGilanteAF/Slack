@@ -28,6 +28,7 @@ export class UsersController {
   getUsers(@Req() req) {
     //로그인되어 있는 사용자의 정보를 가저옴
     return req.user;
+    //res.locals.jwt
   }
 
   @ApiOperation({ summary: '회원가입' })
