@@ -5,6 +5,7 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger/dist/decorators';
+import { User } from 'src/common/decorators/user.decorator';
 import { UserDto } from 'src/common/dto/user.dto';
 import { JoinRequestDto } from './dto/join.request.dto';
 import { UsersService } from './users.service';
@@ -25,9 +26,9 @@ export class UsersController {
   })
   @ApiOperation({ summary: '내 정보조회' })
   @Get()
-  getUsers(@Req() req) {
+  getUsers(@User() user) {
     //로그인되어 있는 사용자의 정보를 가저옴
-    return req.user;
+    return user;
     //res.locals.jwt
   }
 
@@ -45,8 +46,8 @@ export class UsersController {
   })
   @ApiOperation({ summary: '로그인' })
   @Post('login')
-  logIn(@Req() req) {
-    return req.user; //향후 Passport 를 붙일 예정
+  logIn(@User() user) {
+    return user; //향후 Passport 를 붙일 예정
   }
 
   @ApiOperation({ summary: '로그아웃' })
