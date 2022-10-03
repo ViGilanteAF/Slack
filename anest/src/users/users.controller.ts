@@ -61,6 +61,10 @@ export class UsersController {
     return user; //향후 Passport 를 붙일 예정
   }
 
+  //{data: user};
+  //에러가 난 경우, exception filter
+  //res.json({data:user});
+
   @ApiOperation({ summary: '로그아웃' })
   @Post('logout')
   logOut(@Req() req, @Res() res) {
