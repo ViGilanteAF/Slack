@@ -10,14 +10,51 @@ import { WorkspacesModule } from './workspaces/workspaces.module';
 import { ChannelsModule } from './channels/channels.module';
 import { DmsModule } from './dms/dms.module';
 import { UsersService } from './users/users.service';
+import { rootCertificates } from 'tls';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ChannelChats } from './entities/ChannelChats';
+import { ChannelMembers } from './entities/ChannelMembers';
+import { Channels } from './entities/Channels';
+import { DMs } from './entities/DMs';
+import { Mentions } from './entities/Mentions';
+import { Users } from './entities/Users';
+import { WorkspaceMembers } from './entities/WorkspaceMembers';
+import { Workspaces } from './entities/Workspaces';
+import * as ormconfig from '../ormconfig';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    UsersModule,
-    WorkspacesModule,
-    ChannelsModule,
-    DmsModule,
+    TypeOrmModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: async (ConfigService: ConfigService) => {
+        return {
+          type: 'mysql',
+          host: 'localhost',
+          port: '3306',
+          username: ConfigService.get('DB_USERNAME'),
+          password: ConfigService.get('DB_PASSWORD'),
+          database: ConfigService.get('DB_DATABASE'),
+          entities: [
+            ChannelChats,
+            ChannelMembers,
+            Channels,
+            DMs,
+            Mentions,
+            Users,
+            WorkspaceMembers,
+            Workspaces,
+          ],
+          synchronize: true, //처음 한번만 True 로 만들어서 테이블 만들어 둔뒤 꼭!! False 로 바꿔서 데이터가 덥어씌워 지지 않도록 하자!
+          keepConnectionAlive: true,
+          logging: true,
+          charset: ' utf8mb4',
+          autoLoadEntities: true,
+          cli: { migrationDir: 'src/migrations' },
+          migrations: [__dirname + '/src/migrations/*.ts'],
+        };
+      },
+    }),
   ],
   controllers: [AppController],
   providers: [AppService, UsersService],
