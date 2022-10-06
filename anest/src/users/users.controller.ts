@@ -49,7 +49,7 @@ export class UsersController {
   @Post()
   async join(@Body() body: JoinRequestDto) {
     //@Body => express 의 body Pasrer 와 같은것 Dto = Data Transport Object
-    await this.usersService.postUsers(body.email, body.nickname, body.password);
+    await this.usersService.join(body.email, body.nickname, body.password);
   }
 
   @ApiResponse({
