@@ -30,7 +30,6 @@
     "db:create-migration": "npm run typeorm migration:create -- -n",
     "db:generate-migration": "npm run typeorm migration:generate -- -n"
   },
-  
   "dependencies": {
     "@nestjs/common": "^9.0.0",
     "@nestjs/config": "^2.2.0",
@@ -38,6 +37,7 @@
     "@nestjs/platform-express": "^9.0.0",
     "@nestjs/swagger": "^6.1.2",
     "@nestjs/typeorm": "^9.0.1",
+    "bcrypt": "^5.0.1",
     "cookie-parser": "^1.4.6",
     "mysql2": "^2.3.3",
     "reflect-metadata": "^0.1.13",

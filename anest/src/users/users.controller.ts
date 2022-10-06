@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  HttpException,
   Post,
   Query,
   Req,
@@ -17,6 +18,7 @@ import {
 import { User } from 'src/common/decorators/user.decorator';
 import { UserDto } from 'src/common/dto/user.dto';
 import { UndefinedToNullInterceptor } from 'src/common/interceptors/undefined.ToNull.interceptor';
+import { HttpExceptionFilter } from 'src/httpException.filter';
 import { JoinRequestDto } from './dto/join.request.dto';
 import { UsersService } from './users.service';
 
@@ -45,9 +47,9 @@ export class UsersController {
 
   @ApiOperation({ summary: '회원가입' })
   @Post()
-  postUsers(@Body() body: JoinRequestDto) {
+  async join(@Body() body: JoinRequestDto) {
     //@Body => express 의 body Pasrer 와 같은것 Dto = Data Transport Object
-    this.usersService.postUsers(body.email, body.nickname, body.password);
+    await this.usersService.postUsers(body.email, body.nickname, body.password);
   }
 
   @ApiResponse({
