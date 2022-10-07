@@ -17,12 +17,7 @@ import { DMs } from './DMs';
 import { Mentions } from './Mentions';
 import { WorkspaceMembers } from './WorkspaceMembers';
 import { Workspaces } from './Workspaces';
-import {} from 'class-validator';
-import {
-  IsEmail,
-  IsNotEmpty,
-  IsString,
-} from 'class-validator/types/decorator/decorators';
+import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 
 @Index('email', ['email'], { unique: true })
 @Entity({ schema: 'sleact', name: 'users' })
