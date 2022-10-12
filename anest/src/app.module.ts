@@ -20,6 +20,7 @@ import { Users } from './entities/Users';
 import { WorkspaceMembers } from './entities/WorkspaceMembers';
 import { Workspaces } from './entities/Workspaces';
 import * as ormconfig from '../ormconfig';
+import { AuthModule } from './auth/auth.module';
 
 const getData = async () => {
   //뭔짓을 하던 값을 가져와서 return
@@ -33,6 +34,7 @@ const getData = async () => {
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    AuthModule,
     UsersModule,
     WorkspacesModule,
     DmsModule,

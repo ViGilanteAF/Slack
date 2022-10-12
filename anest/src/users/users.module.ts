@@ -8,5 +8,6 @@ import { Users } from 'src/entities/Users';
   imports: [TypeOrmModule.forFeature([Users])],
   providers: [UsersService],
   controllers: [UsersController],
+  exports: [UsersService],
 })
 export class UsersModule {}

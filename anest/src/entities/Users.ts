@@ -18,6 +18,7 @@ import { Mentions } from './Mentions';
 import { WorkspaceMembers } from './WorkspaceMembers';
 import { Workspaces } from './Workspaces';
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
 @Index('email', ['email'], { unique: true })
 @Entity({ schema: 'sleact', name: 'users' })
@@ -34,7 +35,13 @@ export class Users {
   @Column('varchar', { name: 'nickname', length: 30 })
   nickname: string;
 
+  @IsString()
   @IsNotEmpty()
+  @ApiProperty({
+    example: 'nodejsbook',
+    description: '비밀번호',
+    required: true,
+  })
   @Column('varchar', { name: 'password', length: 100, select: false })
   password: string;
 

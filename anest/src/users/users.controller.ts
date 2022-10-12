@@ -17,6 +17,8 @@ import {
   ApiTags,
 } from '@nestjs/swagger/dist/decorators';
 import { LocalAuthGuard } from 'src/auth/local-auth.guard';
+import { NotLoggedInGuard } from '../auth/not-logged-in.guard';
+import { LoggedInGuard } from '../auth/logged-in.guard';
 import { User } from 'src/common/decorators/user.decorator';
 import { UserDto } from 'src/common/dto/user.dto';
 import { UndefinedToNullInterceptor } from 'src/common/interceptors/undefined.ToNull.interceptor';
@@ -43,10 +45,11 @@ export class UsersController {
   @Get()
   getUsers(@User() user) {
     //로그인되어 있는 사용자의 정보를 가저옴
-    return user;
+    return user || false;
     //res.locals.jwt
   }
 
+  @UseGuards(NotLoggedInGuard)
   @ApiOperation({ summary: '회원가입' })
   @Post()
   async join(@Body() body: JoinRequestDto) {
@@ -70,6 +73,7 @@ export class UsersController {
   //에러가 난 경우, exception filter
   //res.json({data:user});
 
+  @UseGuards(new LoggedInGuard())
   @ApiOperation({ summary: '로그아웃' })
   @Post('logout')
   logOut(@Req() req, @Res() res) {
