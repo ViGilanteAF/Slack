@@ -7,12 +7,18 @@ import {
   BadRequestException,
   UnauthorizedException,
 } from '@nestjs/common/exceptions';
+import { WorkspaceMembers } from 'src/entities/WorkspaceMembers';
+import { ChannelMembers } from 'src/entities/ChannelMembers';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(Users)
     private usersRepository: Repository<Users>,
+    @InjectRepository(WorkspaceMembers)
+    private workspaceMembersRepository: Repository<WorkspaceMembers>,
+    @InjectRepository(ChannelMembers)
+    private ChannelMembersRepository: Repository<ChannelMembers>,
   ) {}
   getUser() {}
 
@@ -25,10 +31,20 @@ export class UsersService {
 
     const hashedPassword = await bcrypt.hash(password, 12);
     //없으면 유저 추가
-    await this.usersRepository.save({
+    const returned = await this.usersRepository.save({
       email,
       nickname,
       password: hashedPassword,
     });
+    await this.workspaceMembersRepository.save({
+      UserId: returned.id,
+      WorkspaceId: 1,
+    });
+    await this.ChannelMembersRepository.save({
+      UserId: returned.id,
+      ChannelId: 1,
+    });
+
+    return true;
   }
 }
