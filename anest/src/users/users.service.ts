@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common/exceptions';
 import { WorkspaceMembers } from 'src/entities/WorkspaceMembers';
 import { ChannelMembers } from 'src/entities/ChannelMembers';
+import Connection from 'mysql2/typings/mysql/lib/Connection';
 
 @Injectable()
 export class UsersService {
@@ -19,6 +20,7 @@ export class UsersService {
     private workspaceMembersRepository: Repository<WorkspaceMembers>,
     @InjectRepository(ChannelMembers)
     private ChannelMembersRepository: Repository<ChannelMembers>,
+    private connection: Connection,
   ) {}
   getUser() {}
 

@@ -12,11 +12,12 @@ import {
 } from '@nestjs/common';
 import { ApiOperation } from '@nestjs/swagger/dist';
 import {
+  ApiCookieAuth,
   ApiOkResponse,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger/dist/decorators';
-import { LocalAuthGuard } from 'src/auth/local-auth.guard';
+import { LocalAuthGuard } from '../auth/local-auth.guard';
 import { NotLoggedInGuard } from '../auth/not-logged-in.guard';
 import { LoggedInGuard } from '../auth/logged-in.guard';
 import { User } from 'src/common/decorators/user.decorator';
@@ -72,11 +73,11 @@ export class UsersController {
   //{data: user};
   //에러가 난 경우, exception filter
   //res.json({data:user});
-
-  @UseGuards(new LoggedInGuard())
+  @ApiCookieAuth('connect.sid')
+  @UseGuards(LoggedInGuard)
   @ApiOperation({ summary: '로그아웃' })
   @Post('logout')
-  logOut(@Req() req, @Res() res) {
+  logout(@Req() req, @Res() res) {
     //controller 는 최대한 모르는게 좋은 Service 는 무조건 모르는게 좋음
     req.logout();
     res.clearCookie('connect.sid', { httpOnly: true });
