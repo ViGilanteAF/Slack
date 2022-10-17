@@ -1,4 +1,3 @@
-import { Channel } from 'diagnostics_channel';
 import { Channels } from 'src/entities/Channels';
 import { Workspaces } from 'src/entities/Workspaces';
 import { Connection } from 'typeorm';
