@@ -1,7 +1,7 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Users } from 'src/entities/Users';
-import { Repository, Connection } from 'typeorm';
+import { Repository, DataSource } from 'typeorm';
 import bcrypt from 'bcrypt';
 import {
   BadRequestException,
@@ -21,12 +21,12 @@ export class UsersService {
     private workspaceMembersRepository: Repository<WorkspaceMembers>,
     @InjectRepository(ChannelMembers)
     private ChannelMembersRepository: Repository<ChannelMembers>,
-    private connection: Connection,
+    private dataSource: DataSource,
   ) {}
   getUser() {}
 
   async join(email: string, nickname: string, password: string) {
-    const queryRunner = this.connection.createQueryRunner();
+    const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
     const user = await queryRunner.manager
@@ -40,30 +40,35 @@ export class UsersService {
     const hashedPassword = await bcrypt.hash(password, 12);
     //없으면 유저 추가
     try {
-      const returned = await this.usersRepository.save({
-        email,
-        nickname,
-        password: hashedPassword,
-      });
+      const returned = await this.usersRepository.manager
+        .getRepository(Users)
+        .save({
+          email,
+          nickname,
+          password: hashedPassword,
+        });
+      throw new Error('롤백?하냐?');
+      const workspaceMember = queryRunner.manager
+        .getRepository(WorkspaceMembers)
+        .create();
+      workspaceMember.UserId = returned.id;
+      workspaceMember.WorkspaceId = 1;
 
-      // WorkspaceMembers.UserId = returned.id;
-      // WorkspaceMembers.WorkspaceId = 1;
-      await queryRunner.manager.getRepository(WorkspaceMembers).save({
-        UserId: returned.id,
-        WorkspaceId: 1,
-      });
+      await queryRunner.manager
+        .getRepository(WorkspaceMembers)
+        .save(workspaceMember);
       await queryRunner.manager.getRepository(ChannelMembers).save({
         UserId: returned.id,
         ChannelId: 1,
       });
-
+      await queryRunner.commitTransaction();
       return true;
     } catch (error) {
       console.error(error);
       await queryRunner.rollbackTransaction();
       throw error;
     } finally {
-      await queryRunner.release();
+      await queryRunner.release(); //항상 수동으로 connect 을 할땐 releases 를 해서 연결을 해제 해야 DB로 부터 연결최대 갯수 를 초과 하지 않음
     }
   }
 }
