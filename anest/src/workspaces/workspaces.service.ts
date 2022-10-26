@@ -6,6 +6,7 @@ import { Users } from 'src/entities/Users';
 import { WorkspaceMembers } from 'src/entities/WorkspaceMembers';
 import { Workspaces } from 'src/entities/Workspaces';
 import { Repository } from 'typeorm';
+import { runInThisContext } from 'vm';
 
 @Injectable()
 export class WorkspacesService {
@@ -21,4 +22,17 @@ export class WorkspacesService {
     @InjectRepository(Users)
     private userRepository: Repository<Users>,
   ) {}
+  async findById(id: number) {
+    return this.workspacesRepository.findOne({ where: { id } });
+  }
+
+  async findMyWorkspaces(myid: Number) {
+    return this.workspacesRepository.find({
+      where: {
+        WorkspaceMembers: [{ UserId: myId }],
+      },
+    });
+  }
+
+  async createWorkspace(name: string, url: string) {}
 }
