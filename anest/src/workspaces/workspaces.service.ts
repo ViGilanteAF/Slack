@@ -34,5 +34,17 @@ export class WorkspacesService {
     });
   }
 
-  async createWorkspace(name: string, url: string, myId: number) {}
+  async createWorkspace(name: string, url: string, myId: number) {
+    const workspace = this.workspacesRepository.create({
+      //create 한다고 실제 DB에 넣는건 아님!!
+      name,
+      url,
+      OwnerId: myId,
+    });
+    //const workspace = new Workspaces();
+
+    //workspace.name = name;
+
+    this.workspacesRepository.save(workspace);
+  }
 }
