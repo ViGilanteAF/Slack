@@ -26,7 +26,7 @@ export class WorkspacesService {
     return this.workspacesRepository.findOne({ where: { id } });
   }
 
-  async findMyWorkspaces(myid: Number) {
+  async findMyWorkspaces(myId: number) {
     return this.workspacesRepository.find({
       where: {
         WorkspaceMembers: [{ UserId: myId }],
@@ -34,5 +34,5 @@ export class WorkspacesService {
     });
   }
 
-  async createWorkspace(name: string, url: string) {}
+  async createWorkspace(name: string, url: string, myId: number) {}
 }

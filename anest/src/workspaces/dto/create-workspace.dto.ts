@@ -10,6 +10,8 @@ export class CreateWorkspaceDto {
   })
   public workspace: string;
 
+  @IsString()
+  @IsNotEmpty()
   @ApiProperty({
     example: '슬랙',
     description: 'URL 주소',

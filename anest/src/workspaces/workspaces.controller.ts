@@ -4,7 +4,7 @@ import { ParseIntPipe } from '@nestjs/common/pipes';
 import { ApiTags } from '@nestjs/swagger/dist/decorators';
 import { User } from 'src/common/decorators/user.decorator';
 import { Users } from 'src/entities/Users';
-import { CreateWorkspaceDto } from 'src/users/dto/create-workspace.dto';
+import { CreateWorkspaceDto } from 'src/workspaces/dto/create-workspace.dto';
 import { WorkspacesService } from './workspaces.service';
 
 @ApiTags('WORKSPACE')
