@@ -18,7 +18,7 @@ export class WorkspacesService {
     @InjectRepository(WorkspaceMembers)
     private workspaceMembersRepository: Repository<WorkspaceMembers>,
     @InjectRepository(ChannelMembers)
-    private channelMembersReporitory: Repository<ChannelMembers>,
+    private channelMembersRepository: Repository<ChannelMembers>,
     @InjectRepository(Users)
     private userRepository: Repository<Users>,
   ) {}
@@ -45,6 +45,28 @@ export class WorkspacesService {
 
     //workspace.name = name;
 
-    this.workspacesRepository.save(workspace);
+    const returned = await this.workspacesRepository.save(workspace);
+
+    const workspaceMember = new WorkspaceMembers();
+    workspaceMember.UserId = myId;
+    workspaceMember.WorkspaceId = returned.id;
+    await this.workspaceMembersRepository.save(workspaceMember);
+    const channel = new Channels();
+    channel.name = '일반';
+    channel.WorkspaceId = returned.id;
+    const channelReturned = await this.channelsRepository.save(channel);
+    const channelMember = new ChannelMembers();
+    channelMember.UserId = myId;
+    channelMember.ChannelId = channelReturned.id;
+    await this.channelMembersRepository.save(channelMember);
+  }
+
+  async getWorkspacesMembers(url: string) {
+    return this.userRepository
+      .createQueryBuilder('u')
+      .innerJoin('u.WorkspaceMembers', 'm')
+      .innerJoin('m.Workspace', 'w', 'w.url = :url', { url /*: url */ })
+      .getMany();
+    //ID, Email, PASSWORD, Workspace.Name, Workspace.URL -> getRawMany()
   }
 }
