@@ -156,4 +156,28 @@ export class ChannelsService {
       },
     });
   }
+
+  async postChat({ url, name, content, myId }) {
+    const channel = await this.channelsRepository
+      .createQueryBuilder('channel')
+      .innerJoin('channel.Workspace', 'workspace', 'workspace.url = :url', {
+        url,
+      })
+      .where('channel.name = :name', { name })
+      .getOne();
+
+    if (!channel) {
+      throw new NotFoundException('채널이 존재하지 않습니다.!');
+    }
+    const chats = new ChannelChats();
+    chats.content = content;
+    chats.UserId = myId;
+    chats.ChannelId = channel.id;
+    const savedChat = await this.channelChatsRepository.save(chats);
+    const chatWithUser = await this.channelChatsRepository.findOne({
+      where: { id: savedChat.id },
+      relations: ['User', 'channel'],
+    });
+    /** socket.io 로 워크스페이스 + 채널 사용자에게 전송  */
+  }
 }

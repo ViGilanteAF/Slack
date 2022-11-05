@@ -23,7 +23,7 @@ import { LoggedInGuard } from '../auth/logged-in.guard';
 import { User } from 'src/common/decorators/user.decorator';
 import { UserDto } from 'src/common/dto/user.dto';
 import { UndefinedToNullInterceptor } from 'src/common/interceptors/undefined.ToNull.interceptor';
-import { HttpExceptionFilter } from 'src/httpException.filter';
+import { HttpExceptionFilter } from 'src/http-exception.filter';
 import { JoinRequestDto } from './dto/join.request.dto';
 import { UsersService } from './users.service';
 
