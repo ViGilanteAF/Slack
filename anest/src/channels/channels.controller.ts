@@ -52,11 +52,13 @@ export class ChannelsController {
     });
   }
 
+  /**이미지 업로드 */
   @Post(':name/images')
   postImages(@Body() body) {
     //return this.channelsService.
   }
 
+  /**아직 읽지 않은 대화 */
   @Get(':name/unreads')
   getUnreads(
     @Query('after') after: number,
