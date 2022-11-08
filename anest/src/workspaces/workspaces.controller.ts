@@ -12,11 +12,13 @@ import { WorkspacesService } from './workspaces.service';
 export class WorkspacesController {
   constructor(private workspacesService: WorkspacesService) {}
 
+  /** 워크스페이스 가지고 오기 */
   @Get()
   getMyWorkwpaces(@User() user: Users) {
     return this.workspacesService.findMyWorkspaces(user.id);
   }
 
+  /**워크스페이스 만들기 */
   @Post()
   createWorkspace(@User() user: Users, @Body() body: CreateWorkspaceDto) {
     return this.workspacesService.createWorkspace(
@@ -26,20 +28,21 @@ export class WorkspacesController {
     );
   }
 
+  /**워크스페이스 멤버 가지고 오기 */
   @Get(':url/members')
   getAllMembersFromWorkspace(@Param('url') url: string) {
     return this.workspacesService.getWorkspacesMembers(url);
   }
 
+  /**워크스페이스 멤버 초대 */
   @Post(':url/members')
   inviteMemversToWorkspace() {}
 
-  @Delete(':url/members/:id')
-  kickMemberFromWorkspace() {}
-
-  @Get(':url/users/:id')
+  /**워크스페이스 내에 특정 멤버 불러오기 */
+  @Get(':url/members/:id')
   getMemberInfoInWorkspace() {}
 
+  /**워크스페이스 특정 멤버 불러오기 */
   @Get(':url/users/:id')
   DEPRECATED_getMemberInfoInWorkspace() {
     this.getMemberInfoInWorkspace();

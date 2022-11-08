@@ -26,6 +26,7 @@ import { WorkspaceMembers } from './entities/WorkspaceMembers';
 import { Workspaces } from './entities/Workspaces';
 import * as ormconfig from '../ormconfig';
 import { AuthModule } from './auth/auth.module';
+import { EventsModule } from './events/events.module';
 
 const getData = async () => {
   //뭔짓을 하던 값을 가져와서 return
@@ -88,9 +89,10 @@ const getData = async () => {
       logging: true,
     }),
     TypeOrmModule.forFeature([Users]),
+    EventsModule,
   ],
   controllers: [AppController],
-  providers: [AppService, UsersService],
+  providers: [AppService],
   exports: [],
 })
 export class AppModule implements NestModule {
