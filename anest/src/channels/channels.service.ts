@@ -5,6 +5,7 @@ import { ChannelMembers } from 'src/entities/ChannelMembers';
 import { Channels } from 'src/entities/Channels';
 import { Users } from 'src/entities/Users';
 import { Workspaces } from 'src/entities/Workspaces';
+import { EventsGateway } from 'src/events/events.gateway';
 import { MoreThan, Repository } from 'typeorm';
 import { runInThisContext } from 'vm';
 
@@ -22,6 +23,7 @@ export class ChannelsService {
     private channelChatsRepository: Repository<ChannelChats>,
     @InjectRepository(Users)
     private usersRepository: Repository<Users>,
+    private eventsGateway: EventsGateway,
   ) {}
 
   async findById(id: number) {
@@ -179,5 +181,8 @@ export class ChannelsService {
       relations: ['User', 'channel'],
     });
     /** socket.io 로 워크스페이스 + 채널 사용자에게 전송  */
+    this.eventsGateway.server
+      .to(`/ws-${url}-${chatWithUser.ChannelId}`)
+      .emit('message', chatWithUser);
   }
 }
