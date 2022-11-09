@@ -43,7 +43,7 @@ export class EventsGateway
   }
 
   afterInit(server: Server): any {
-    console.log('init');
+    console.log('Websocket Server init');
   }
 
   handleConnection(@ConnectedSocket() socket: Socket): any {
