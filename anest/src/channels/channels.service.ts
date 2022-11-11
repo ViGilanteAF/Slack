@@ -139,6 +139,70 @@ export class ChannelsService {
     );
   }
 
+  async createWorkspaceChannelChats(
+    url: string,
+    name: string,
+    content: string,
+    myId: number,
+  ) {
+    const channel = await this.channelsRepository
+      .createQueryBuilder('channel')
+      .innerJoin('channel.Workspace', 'workspace', 'workspace.url = :url', {
+        url,
+      })
+      .where('channel.name = :name', { name })
+      .getOne();
+
+    const chats = new ChannelChats();
+    chats.content = content;
+    chats.UserId = myId;
+    chats.ChannelId = channel.id;
+    const savedChat = await this.channelChatsRepository.save(chats);
+    const chatWithUser = await this.channelChatsRepository.findOne({
+      where: { id: savedChat.id },
+      relations: ['User', 'Channel'],
+    });
+    /** socket.io 로 워크스페이스 + 채널 사용자에게 전송  */
+    this.eventsGateway.server
+      /** 위에 PostChat 에서 찾았기 때문에 .to(`/ws-${url}-${channel.Id}`) 로 작성해도 무방함 */
+      .to(`/ws-${url}-${chatWithUser.ChannelId}`)
+
+      .emit('message', chatWithUser);
+  }
+
+  /**채널 내의 이미지 업로드 */
+  async createWorkspaceChannelImages(
+    url: string,
+    name: string,
+    files: Express.Multer.File[],
+    myId: number,
+  ) {
+    console.log(files);
+    const channel = await this.channelsRepository
+      .createQueryBuilder('channel')
+      .innerJoin('channel.Workspace', 'workspace', 'workspace.url = :url', {
+        url,
+      })
+      .where('channel.name = :name', { name })
+      .getOne();
+    /** file 들 여러개 업로드 */
+    for (let i = 0; i < files.length; i++) {
+      const chats = new ChannelChats();
+      chats.content = files[i].path;
+      chats.UserId = myId;
+      chats.ChannelId = channel.id;
+      const savedChat = await this.channelChatsRepository.save(chats);
+      const chatWithUser = await this.channelChatsRepository.findOne({
+        where: { id: savedChat.id },
+        relations: ['User', 'Channel'],
+      });
+      /**동일 채널에 있는 유저들에게 Socket.io 로 브로드캐스팅 */
+      this.eventsGateway.server
+        .to(`/ws-${url}-${chatWithUser.ChannelId}`)
+        .emit('message', chatWithUser);
+    }
+  }
+
   /**채널 내에서 내가 읽지 않은 메세지 수 보여주기 */
   async getChannelUnreadsCount(url, name, after) {
     const channel = await this.channelsRepository
@@ -157,32 +221,5 @@ export class ChannelsService {
         //orkhan.gitbook.io/typeorm/docs/find-oprion
       },
     });
-  }
-
-  async postChat({ url, name, content, myId }) {
-    const channel = await this.channelsRepository
-      .createQueryBuilder('channel')
-      .innerJoin('channel.Workspace', 'workspace', 'workspace.url = :url', {
-        url,
-      })
-      .where('channel.name = :name', { name })
-      .getOne();
-
-    if (!channel) {
-      throw new NotFoundException('채널이 존재하지 않습니다.!');
-    }
-    const chats = new ChannelChats();
-    chats.content = content;
-    chats.UserId = myId;
-    chats.ChannelId = channel.id;
-    const savedChat = await this.channelChatsRepository.save(chats);
-    const chatWithUser = await this.channelChatsRepository.findOne({
-      where: { id: savedChat.id },
-      relations: ['User', 'channel'],
-    });
-    /** socket.io 로 워크스페이스 + 채널 사용자에게 전송  */
-    this.eventsGateway.server
-      .to(`/ws-${url}-${chatWithUser.ChannelId}`)
-      .emit('message', chatWithUser);
   }
 }

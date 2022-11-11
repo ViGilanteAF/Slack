@@ -1,9 +1,32 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Query,
+  UploadedFile,
+  UploadedFiles,
+  UseInterceptors,
+} from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { FilesInterceptor } from '@nestjs/platform-express/multer';
 import { ApiTags } from '@nestjs/swagger/dist/decorators';
 import { query } from 'express';
+import multer from 'multer';
 import { User } from 'src/common/decorators/user.decorator';
 import { ChannelsService } from './channels.service';
 import { PostChatDto } from './dto/post-chat.dto';
+import path from 'path';
+import fs from 'fs';
+import { Users } from 'src/entities/Users';
+
+try {
+  fs.readdirSync('uploads');
+} catch (error) {
+  console.error('updloads 폴더가 존재하지 않아 uploads 폴더를 생성합니다!');
+  fs.mkdirSync('uploads');
+}
 
 @ApiTags('CHANNEL')
 @Controller('api/workspaces/:url/channels')
@@ -39,23 +62,47 @@ export class ChannelsController {
 
   @Post(':name/chats')
   postChat(
-    @Param('url') url: string,
+    @Param('url') url,
     @Param('name') name: string,
-    @Body() body: PostChatDto,
-    @User() user,
+    @Body('content') content,
+    @User() user: Users,
   ) {
-    return this.channelsService.postChat({
+    return this.channelsService.createWorkspaceChannelChats(
       url,
-      content: body.content,
+      content,
       name,
-      myId: user.id,
-    });
+      user.id,
+    );
   }
 
   /**이미지 업로드 */
+  @UseInterceptors(
+    FilesInterceptor('image', 10, {
+      storage: multer.diskStorage({
+        destination(req, file, cb) {
+          cb(null, 'uploads/');
+        },
+        filename(req, file, cb) {
+          const ext = path.extname(file.originalname);
+          cb(null, path.basename(file.originalname, ext) + Date.now() + ext);
+        },
+      }),
+      limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+    }),
+  )
   @Post(':name/images')
-  postImages(@Body() body) {
-    //return this.channelsService.
+  postImages(
+    @UploadedFiles() files: Express.Multer.File[],
+    @Param('url') url: string,
+    @Param('name') name: string,
+    @User() user,
+  ) {
+    return this.channelsService.createWorkspaceChannelImages(
+      url,
+      name,
+      files,
+      user.id,
+    );
   }
 
   /**아직 읽지 않은 대화 */

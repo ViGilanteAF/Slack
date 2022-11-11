@@ -13,8 +13,25 @@ declare const module: any;
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const port = process.env.PORT || 3000;
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(new ValidationPipe({ transform: true }));
   app.useGlobalFilters(new HttpExceptionFilter());
+
+  if (process.env.NODE_ENV === 'production') {
+    app.enableCors({
+      origin: ['https://127.0.0.1'],
+      credentials: true,
+    });
+  } else {
+    app.enableCors({
+      origin: true,
+      credentials: true,
+    });
+  }
+
+  app.useStaticAssects(path.join(__dirname, '..', 'upload'), {
+    prefix: '/uploads',
+  });
+
   const config = new DocumentBuilder()
     .setTitle('Sleact API')
     .setDescription('Sleact 개발을 위해 만들어진 API 문서입니다.')
