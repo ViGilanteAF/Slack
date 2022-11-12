@@ -7,11 +7,13 @@ import { DocumentBuilder } from '@nestjs/swagger';
 import { SwaggerModule } from '@nestjs/swagger/dist';
 import { HttpExceptionFilter } from './http-exception.filter';
 import { ValidationPipe } from '@nestjs/common';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import path from 'path';
 
 declare const module: any;
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
   const port = process.env.PORT || 3000;
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
   app.useGlobalFilters(new HttpExceptionFilter());
@@ -28,7 +30,7 @@ async function bootstrap() {
     });
   }
 
-  app.useStaticAssects(path.join(__dirname, '..', 'upload'), {
+  app.useStaticAssets(path.join(__dirname, '..', 'upload'), {
     prefix: '/uploads',
   });
 
