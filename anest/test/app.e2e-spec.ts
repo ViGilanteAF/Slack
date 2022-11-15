@@ -1,7 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
-import * as request from 'supertest';
+import request from 'supertest';
 import { AppModule } from './../src/app.module';
+import passport from 'passport';
+import session from 'express-session';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
@@ -12,7 +14,19 @@ describe('AppController (e2e)', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
+    app.use(
+      session({
+        resave: false,
+        saveUninitialized: false,
+        secret: process.env.COOKIE_SECRET,
+        cookie: {
+          httpOnly: true,
+        },
+      }),
+    );
     await app.init();
+    app.use(passport.initialize());
+    app.use(passport.session());
   });
 
   it('/ (GET)', () => {
@@ -20,5 +34,16 @@ describe('AppController (e2e)', () => {
       .get('/')
       .expect(200)
       .expect('Hello World!');
+  });
+  /** superagent 라이브러리도 있었으나 azios 에 밀려서 supertest 를 다시 만들어서 e2e test 시에 많이 사용된다. */
+  /** axios 또한 moxios 가 e2e test 용으로 만들어 져 있다.*/
+  it('/users/login (POST)', (done) => {
+    return request(app.getHttpServer())
+      .post('api/users/login')
+      .send({
+        email: 'stronghu@naver.com',
+        password: 'nodejsbook1',
+      })
+      .expect(201, done);
   });
 });
