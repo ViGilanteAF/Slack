@@ -1,4 +1,6 @@
+![maxresdefault](https://user-images.githubusercontent.com/40601526/231259094-47c47501-c295-404b-aa87-a209a5adcade.jpg)
 # Slack
+
 > Slack is Clone coding with Slack Service
 - Visite my [Project History](https://stronghu95.notion.site/Slack-Clone-c4af61614beb4d06ad64a57f5e744b28) to view history.
 - Use Nest.js and MySQL
@@ -53,9 +55,10 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 # [ERD](https://www.erdcloud.com/p/3jCm3eFKdvKSRLJYt)
+![Slack](https://user-images.githubusercontent.com/40601526/231259342-4f945a09-c023-4719-9fe6-17874da731a2.png)
 
 # Function & Logic
->Login & API Service & SignUp & Pm2
+>Login & API Service & SignUp
 ## [Login](https://github.com/ViGilanteAF/Slack/blob/main/src/app.module.ts)
 ~~~javascript
 
@@ -223,5 +226,5 @@ describe('AppController (e2e)', () => {
 * Use Nest.js to build Slack service from Express.js.
 * Make more `Module` system.
 * Use less await. Decrease memory usage.
-* `QueryBuilder` is wonderful DB query.\
+* `QueryBuilder` is wonderful DB query.
 * [More](https://stronghu95.notion.site/10cf545a0edf4be3a4e411185420bc18)
