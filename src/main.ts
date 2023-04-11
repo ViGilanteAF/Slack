@@ -35,8 +35,8 @@ async function bootstrap() {
   });
 
   const config = new DocumentBuilder()
-    .setTitle('Sleact API')
-    .setDescription('Sleact 개발을 위해 만들어진 API 문서입니다.')
+    .setTitle('Slact API')
+    .setDescription('API Document for Slact.')
     .setVersion('1.0')
     .addCookieAuth('connect.sid')
     .build();

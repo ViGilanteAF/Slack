@@ -1,30 +1,25 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# Slack
+> Slack is Clone coding with Slack Service
+- Visite my [Project History](https://stronghu95.notion.site/Slack-Clone-c4af61614beb4d06ad64a57f5e744b28) to view history.
+- Use Nest.js and MySQL
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+# Purpose
+- Use Node.js build Backend 
+- Use Restful API run Server
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+# Environment
+![JavaScript](https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E)
+![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
+![NestJS](https://img.shields.io/badge/nestjs-%23E0234E.svg?style=for-the-badge&logo=nestjs&logoColor=white)
+![NodeJS](https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white)
+![MySQL](https://img.shields.io/badge/mysql-%2300f.svg?style=for-the-badge&logo=mysql&logoColor=white)
 
-## Description
-
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+# Description
+- Use Nest.js build Slack Service Backend.
+- Build Live Chatting Service.
+- Channel Service as Slack.
+- It work Direct Message Service.
+- Channel leader Service
 
 ## Installation
 
@@ -57,17 +52,176 @@ $ npm run test:e2e
 # test coverage
 $ npm run test:cov
 ```
+# [ERD](https://www.erdcloud.com/p/3jCm3eFKdvKSRLJYt)
 
-## Support
+# Function & Logic
+>Login & API Service & SignUp & Pm2
+## [Login](https://github.com/ViGilanteAF/Slack/blob/main/src/app.module.ts)
+~~~javascript
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+    ConfigModule.forRoot({ isGlobal: true }),
+    AuthModule,
+    UsersModule,
+    WorkspacesModule,
+    DmsModule,
+    TypeOrmModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: async (ConfigService: ConfigService) => {
+        return {
+          type: 'mysql',
+          host: 'localhost',
+          port: 3306,
+          username: ConfigService.get('DB_USERNAME'),
+          password: ConfigService.get('DB_PASSWORD'),
+          database: ConfigService.get('DB_DATABASE'),
+          entities: [
+            ChannelChats,
+            ChannelMembers,
+            Channels,
+            DMs,
+            Mentions,
+            Users,
+            WorkspaceMembers,
+            Workspaces,
+          ],
+          synchronize: false, /
 
-## Stay in touch
+          keepConnectionAlive: true,
+          logging: true,
+          charset: 'utf8mb4',
+          autoLoadEntities: true,
+          cli: { migrationDir: 'src/migrations' },
+          migrations: [__dirname + '/src/migrations/*.ts'],
+        };
+      },
+    }),
+    TypeOrmModule.forRoot({
+      type: 'mysql',
+      host: 'localhost',
+      port: 3306,
+      username: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_DATABASE,
+      autoLoadEntities: true,
+      keepConnectionAlive: true,
+      migrations: [__dirname + '/migrations/*.ts'],
+      charset: 'utf8mb4',
+      synchronize: false,
+      logging: true,
+    }),
+    TypeOrmModule.forFeature([Users]),
+    EventsModule,
+  ],
+  controllers: [AppController],
+  providers: [AppService],
+  exports: [],
+})
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer): any {
+    consumer.apply(LoggerMiddleware).forRoutes('*');
+  }
+~~~
+## [API Swagger Service](https://github.com/ViGilanteAF/Slack/blob/main/src/main.ts)
+~~~javascript
+const config = new DocumentBuilder()
+    .setTitle('Slact API')
+    .setDescription('API Document for Slact.')
+    .setVersion('1.0')
+    .addCookieAuth('connect.sid')
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, document);
+~~~
+## [SignUp](https://github.com/ViGilanteAF/Slack/blob/main/src/users/users.controller.ts)
+~~~javascript
+@UseGuards(NotLoggedInGuard)
+  @ApiOperation({ summary: '회원가입' })
+  @Post()
+  async join(@Body() body: JoinRequestDto) {
+    //@Body => express 의 body Pasrer 와 같은것 Dto = Data Transport Object
+    await this.usersService.join(body.email, body.nickname, body.password);
+  }
+~~~
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+# Unit Test & E2E Testing
+## [Unit testing](https://github.com/ViGilanteAF/Slack/blob/main/src/users/users.service.spec.ts)
+~~~javascript
+it('should be defined', () => {
+    expect(service).toBeDefined();
+  });
+  /**나중에 할 테스트는 it.todo 으로 하고
+   * 바로 해야할 테스트는 it  으로 한다.
+   */
+  it('findByEmail은 Email을 통해 유저를 찾아야 함', () => {
+    expect(service.findByEmail('abc@naver.com')).resolves.toStrictEqual({
+      email: 'abc@naver.com',
+      id: 1,
+    });
+  });
 
-## License
+  it.todo('findByEmail은 유저를 찾지 못하면 null을 반환해야함!', () => {
+    expect(service.findByEmail('abc@naver.com')).resolves.toBe(null);
+  });
+});
+~~~
+## [E2E testing](https://github.com/ViGilanteAF/Slack/blob/main/test/app.e2e-spec.ts)
+~~~javascript
+import { Test, TestingModule } from '@nestjs/testing';
+import { INestApplication } from '@nestjs/common';
+import request from 'supertest';
+import { AppModule } from './../src/app.module';
+import passport from 'passport';
+import session from 'express-session';
 
-Nest is [MIT licensed](LICENSE).
+describe('AppController (e2e)', () => {
+  let app: INestApplication;
+
+  beforeEach(async () => {
+    const moduleFixture: TestingModule = await Test.createTestingModule({
+      imports: [AppModule],
+    }).compile();
+
+    app = moduleFixture.createNestApplication();
+    app.use(
+      session({
+        resave: false,
+        saveUninitialized: false,
+        secret: process.env.COOKIE_SECRET,
+        cookie: {
+          httpOnly: true,
+        },
+      }),
+    );
+    await app.init();
+    app.use(passport.initialize());
+    app.use(passport.session());
+  });
+
+  it('/ (GET)', () => {
+    return request(app.getHttpServer())
+      .get('/')
+      .expect(200)
+      .expect('Hello World!');
+  });
+  /** superagent 라이브러리도 있었으나 azios 에 밀려서 supertest 를 다시 만들어서 e2e test 시에 많이 사용된다. */
+  /** axios 또한 moxios 가 e2e test 용으로 만들어 져 있다.*/
+  it('/users/login (POST)', (done) => {
+    return request(app.getHttpServer())
+      .post('api/users/login')
+      .send({
+        email: 'abc@naver.com',
+        password: 'nodejsbook1',
+      })
+      .expect(201, done);
+  });
+});
+~~~
+
+---
+
+# Development to do....
+* Use Nest.js to build Slack service from Express.js.
+* Make more `Module` system.
+* Use less await. Decrease memory usage.
+* `QueryBuilder` is wonderful DB query.\
+* [More](https://stronghu95.notion.site/10cf545a0edf4be3a4e411185420bc18)

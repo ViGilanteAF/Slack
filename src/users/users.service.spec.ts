@@ -6,7 +6,7 @@ import { WorkspaceMembers } from 'src/entities/WorkspaceMembers';
 import { UsersService } from './users.service';
 
 class MockUserRepository {
-  #data = [{ id: 1, email: 'stronghu@naver.com' }];
+  #data = [{ id: 1, email: 'abc@naver.com' }];
   findOne({ where: { email } }) {
     const data = this.#data.find((v) => v.email === email);
     if (data) {
@@ -51,13 +51,13 @@ describe('UsersService', () => {
    * 바로 해야할 테스트는 it  으로 한다.
    */
   it('findByEmail은 Email을 통해 유저를 찾아야 함', () => {
-    expect(service.findByEmail('stronghu@naver.com')).resolves.toStrictEqual({
-      email: 'stronghu@naver.com',
+    expect(service.findByEmail('abc@naver.com')).resolves.toStrictEqual({
+      email: 'abc@naver.com',
       id: 1,
     });
   });
 
   it.todo('findByEmail은 유저를 찾지 못하면 null을 반환해야함!', () => {
-    expect(service.findByEmail('stronghu@naver.com')).resolves.toBe(null);
+    expect(service.findByEmail('abc@naver.com')).resolves.toBe(null);
   });
 });

@@ -41,7 +41,7 @@ describe('AppController (e2e)', () => {
     return request(app.getHttpServer())
       .post('api/users/login')
       .send({
-        email: 'stronghu@naver.com',
+        email: 'abc@naver.com',
         password: 'nodejsbook1',
       })
       .expect(201, done);
